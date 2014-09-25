@@ -1,3 +1,7 @@
+#ifdef CONFIG_MACH_YULONG
+#include <media/msm_cam_sensor_yulong.h>
+#else
+
 #ifndef __LINUX_MSM_CAM_SENSOR_H
 #define __LINUX_MSM_CAM_SENSOR_H
 
@@ -777,3 +781,4 @@ struct msm_flash_cfg_data_t32 {
 #endif
 
 #endif /* __LINUX_MSM_CAM_SENSOR_H */
+#endif
