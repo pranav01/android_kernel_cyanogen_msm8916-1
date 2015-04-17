@@ -1323,17 +1323,10 @@ struct task_struct {
 
 	cputime_t utime, stime, utimescaled, stimescaled;
 	cputime_t gtime;
-#ifndef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
-	struct cputime prev_cputime;
-#endif
-#ifdef CONFIG_VIRT_CPU_ACCOUNTING_GEN
-	seqlock_t vtime_seqlock;
-	unsigned long long vtime_snap;
-	enum {
-		VTIME_SLEEPING = 0,
-		VTIME_USER,
-		VTIME_SYS,
-	} vtime_snap_whence;
+	unsigned long long cpu_power;
+
+#ifndef CONFIG_VIRT_CPU_ACCOUNTING
+	cputime_t prev_utime, prev_stime;
 #endif
 	unsigned long nvcsw, nivcsw; /* context switch counts */
 	struct timespec start_time; 		/* monotonic time */
