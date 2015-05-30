@@ -374,6 +374,7 @@ struct smb1360_chip {
 	bool				batt_warm;
 	bool				batt_cool;
 	bool				batt_full;
+	bool				power_ok;
 	bool				resume_completed;
 	bool				irq_waiting;
 	bool				empty_soc;
@@ -990,6 +991,9 @@ static int smb1360_get_prop_batt_status(struct smb1360_chip *chip)
 	}
 
 	pr_debug("STATUS_3_REG = %x\n", reg);
+		
+	if(!chip->power_ok)
+		return POWER_SUPPLY_STATUS_DISCHARGING;
 
 	if (reg & CHG_HOLD_OFF_BIT)
 		return POWER_SUPPLY_STATUS_NOT_CHARGING;
@@ -2285,6 +2289,14 @@ static int otg_oc_handler(struct smb1360_chip *chip, u8 rt_stat)
 	return 0;
 }
 
+static int power_ok_handler(struct smb1360_chip *chip, u8 rt_stat)
+{
+	pr_debug("xxx::usb in::rt_stat = 0x%02x\n", rt_stat);
+	chip->power_ok = rt_stat;	
+	return 0;
+}
+
+
 struct smb_irq_info {
 	const char		*name;
 	int			(*smb_irq)(struct smb1360_chip *chip,
@@ -2398,6 +2410,7 @@ static struct irq_handler_info handlers[] = {
 		{
 			{
 				.name		= "power_ok",
+				.smb_irq	= power_ok_handler,				
 			},
 			{
 				.name		= "unused",
